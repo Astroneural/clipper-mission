@@ -107,20 +107,20 @@
             cameraLockedToSpacecraft = !cameraLockedToSpacecraft;
             if (cameraLockedToSpacecraft) {
                 cameraLockedToPlanet = false;
-                cameraLockButton_planet.textContent = "Lock Camera to Planet";
+                cameraLockButton_planet.textContent = "Info on Europa";
             }
             cameraLockButton.textContent = cameraLockedToSpacecraft ? 
-            "Unlock Camera" : "Lock Camera to Spacecraft";
+            "Back" : "Info on Europa Clipper";
         });
 
         cameraLockButton_planet.addEventListener('click', () => {
             cameraLockedToPlanet = !cameraLockedToPlanet;
             if (cameraLockedToPlanet) {
                 cameraLockedToSpacecraft = false;
-                cameraLockButton.textContent = "Lock Camera to Spacecraft";
+                cameraLockButton.textContent = "Info on Europa Clipper";
             }
             cameraLockButton_planet.textContent = cameraLockedToPlanet ? 
-            "Unlock Camera" : "Lock Camera to Planet";
+            "Back" : "Info on Europa";
         });
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 2);
