@@ -13,39 +13,26 @@
             top: 10px;
             left: 10px;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 16px;
             background: rgba(0, 0, 0, 0.5);
             padding: 5px 10px;
             border-radius: 4px;
         }
-        #infoText {
+        #infoText, #infoTextPlanet {
             position: absolute;
-            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 16px;
             background: rgba(0, 0, 0, 0.5);
             padding: 5px 10px;
             border-radius: 4px;
             display: none;
         }
-        /* Added Planet Info Text */
-        #infoTextPlanet {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 4px;
-            display: none;
-        }
+        #infoText { bottom: 10px; }
+        #infoTextPlanet { bottom: 50px; }
         #cameraLockButton {
             position: absolute;
             top: 10px;
@@ -56,11 +43,9 @@
             padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
-        #cameraLockButton:hover {
-            background: rgba(50, 50, 50, 0.7);
-        }
+        #cameraLockButton:hover { background: rgba(50, 50, 50, 0.7); }
         #cameraLockButton_planet {
             position: absolute;
             top: 60px;
@@ -71,69 +56,135 @@
             padding: 8px 15px;
             border-radius: 4px;
             cursor: pointer;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
-        #cameraLockButton_planet:hover {
-            background: rgba(50, 50, 50, 0.7);
+        #cameraLockButton_planet:hover { background: rgba(50, 50, 50, 0.7); }
+        /* Instructions overlay style */
+        #instructions {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 24px;
+            text-align: center;
+            z-index: 1000;
         }
+        /* Show Instructions Button Style */
+        #showInstructionsButton {
+            position: absolute;
+            top: 110px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #showInstructionsButton:hover { background: rgba(50, 50, 50, 0.7); }
+        /* Close Instructions Button Style */
+        #closeInstructionsButton {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #closeInstructionsButton:hover { background: rgba(50, 50, 50, 0.7); }
     </style>
 </head>
 <body>
-    <div id="collisionCounter">Geyser Collisions: 0</div>
-    <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few : <ul><li>Clipper does not actually fly through the plumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></div>
+    <div id="collisionCounter">Particles Collected: 0</div>
+    <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few: <ul><li>Clipper does not actually fly through the plumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></ul></div>
     <div id="infoTextPlanet">Europa is one of the many moons of Jupiter and one of only two icy moons in the Solar System, the other being Saturn's moon Enceladus. Beneath the ice layer lies a liquid ocean (twice the size of all of Earth's!) thanks to the gravitational effects of Jupiter. Europa also has geysers erupting water vapor which may hint at inner contents and the possibility of life. On the surface, we can also see cracks along the surface. These, along with the lack of craters and the fact that it is the smoothest object in the solar system, suggest the surface is self-healing.</div>
-    <button id="cameraLockButton">More on Europa Clipper</button>
-    <button id="cameraLockButton_planet">More on Europa</button>
+    <button id="cameraLockButton">Info on Europa Clipper</button>
+    <button id="cameraLockButton_planet">Info on Europa</button>
+    <button id="showInstructionsButton">Show Instructions</button>
+    <!-- Instructions overlay -->
+    <div id="instructions">
+        <div>
+            <span style="color: rgb(255,0,0); font-size: 32px;">Europa Clipper: The Game</span><br>
+            Use W/A to move in the Z direction<br>
+            Use A/D to move in the X direction<br>
+            Use Q/E to move in the Y direction<br>
+            <span style="color: rgb(0, 238, 255);">Goal: Collect particles from geysers</span><br>
+            Click buttons for additional info
+        </div>
+        <button id="closeInstructionsButton">Close</button>
+    </div>
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-
+    
         // Load background texture
         const loader = new THREE.TextureLoader();
         loader.load('models/pexels-free-nature-stock-7480.jpg', function(texture) {
-                scene.background = texture;
+            scene.background = texture;
         });
-
+    
         // Camera lock state
         let cameraLockedToSpacecraft = false;
         let cameraLockedToPlanet = false;
         const cameraLockButton = document.getElementById('cameraLockButton');
         const cameraLockButton_planet = document.getElementById('cameraLockButton_planet');
-
+    
         cameraLockButton.addEventListener('click', () => {
             cameraLockedToSpacecraft = !cameraLockedToSpacecraft;
             if (cameraLockedToSpacecraft) {
                 cameraLockedToPlanet = false;
                 cameraLockButton_planet.textContent = "Info on Europa";
             }
-            cameraLockButton.textContent = cameraLockedToSpacecraft ? 
-            "Back" : "Info on Europa Clipper";
+            cameraLockButton.textContent = cameraLockedToSpacecraft ? "Back" : "Info on Europa Clipper";
         });
-
+    
         cameraLockButton_planet.addEventListener('click', () => {
             cameraLockedToPlanet = !cameraLockedToPlanet;
             if (cameraLockedToPlanet) {
                 cameraLockedToSpacecraft = false;
                 cameraLockButton.textContent = "Info on Europa Clipper";
             }
-            cameraLockButton_planet.textContent = cameraLockedToPlanet ? 
-            "Back" : "Info on Europa";
+            cameraLockButton_planet.textContent = cameraLockedToPlanet ? "Back" : "Info on Europa";
         });
-
+    
+        // Show and Close Instructions event handlers
+        const showInstructionsButton = document.getElementById("showInstructionsButton");
+        const instructionsDiv = document.getElementById("instructions");
+        const closeInstructionsButton = document.getElementById("closeInstructionsButton");
+    
+        showInstructionsButton.addEventListener("click", () => {
+            instructionsDiv.style.display = "flex";
+        });
+    
+        closeInstructionsButton.addEventListener("click", () => {
+            instructionsDiv.style.display = "none";
+        });
+    
         const ambientLight = new THREE.AmbientLight(0xffffff, 2);
         scene.add(ambientLight);
-
+    
         const directionalLight = new THREE.DirectionalLight(0xffffff, 4);
         directionalLight.position.set(5, 10, 7.5);
         scene.add(directionalLight);
-
+    
         // Create a planet group to contain both the planet model and geysers
         const planetGroup = new THREE.Group();
         scene.add(planetGroup);
-
+    
         // Load Planet from GLB
         let planet;
         const gltfLoader = new THREE.GLTFLoader();
@@ -156,7 +207,7 @@
         }, undefined, function(error) {
             console.error(error);
         });
-
+    
         // Spacecraft
         let spacecraft;
         gltfLoader.load('models/clipper_spacecraft.glb', function(gltf) {
@@ -178,29 +229,29 @@
         }, undefined, function(error) {
             console.error(error);
         });
-
-        camera.position.set(0, 15, 20);
+    
+        camera.position.set(0, 10, 15);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
-
+    
         // Gravity
-        let velocity = new THREE.Vector3(0, 0.5, 0);
-        const gravityStrength = 0.01;
+        let velocity = new THREE.Vector3(0, 0.25, 0); // reduced initial speed
+        const gravityStrength = 0.005; // reduced gravity effect
         const rotationSpeed = 0.005;
-
+    
         function checkCollision() {
             const distance = spacecraft.position.length();
             if (distance < 5.5) {
                 alert("Game Over: Spacecraft crashed into the planet!");
                 spacecraft.position.set(8, 0, 0);
-                velocity.set(0, 0.5, 0);
+                velocity.set(0, 0.25, 0);
             }
         }
-
+    
         // Geyser Particles
         const geyserParticles = [];
         let geyserCollisionCount = 0;
         const collisionCounterDiv = document.getElementById("collisionCounter");
-
+    
         function randomPointOnSphere(radius) {
             const u = Math.random();
             const v = Math.random();
@@ -211,7 +262,7 @@
             const z = radius * Math.cos(phi);
             return new THREE.Vector3(x, y, z);
         }
-
+    
         function createGeyserParticle(surfacePoint) {
             const particleCount = 100;
             const geyserGroup = new THREE.Group();
@@ -246,11 +297,11 @@
                 geyserGroup.add(cone);
             }
         }
-
+    
         // Track geyser warnings
         const upcomingGeysers = [];
         const clock = new THREE.Clock();
-
+    
         function scheduleGeyser() {
             const surfacePoint = randomPointOnSphere(5);
             const markerGeometry = new THREE.SphereGeometry(0.2, 8, 8);
@@ -260,7 +311,7 @@
             planetGroup.add(markerMesh);
             upcomingGeysers.push({ marker: markerMesh, surfacePoint, timeLeft: 5 });
         }
-
+    
         function animate() {
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
@@ -271,7 +322,7 @@
                 velocity.add(gravityForce);
                 spacecraft.position.add(velocity);
                 if (cameraLockedToSpacecraft) {
-                    camera.position.copy(spacecraft.position).add(new THREE.Vector3(0, 10, 5));
+                    camera.position.copy(spacecraft.position).add(new THREE.Vector3(0, 5, 2.5));
                     camera.lookAt(spacecraft.position);
                     spacecraft.rotation.x += 0.001;
                     spacecraft.rotation.y += 0.001;
@@ -281,32 +332,24 @@
                     if (planet) {
                         const planetWorldPos = new THREE.Vector3();
                         planet.getWorldPosition(planetWorldPos);
-                        camera.position.copy(planetWorldPos).add(new THREE.Vector3(0, 10, 20));
+                        camera.position.copy(planetWorldPos).add(new THREE.Vector3(0, 5, 10));
                         camera.lookAt(planetWorldPos);
                     }
                 } else {
                     if (camera.position.x !== 0 || camera.position.y !== 15 || camera.position.z !== 20) {
-                        camera.position.set(0, 15, 20);
+                        camera.position.set(0, 10, 15);
                         camera.lookAt(new THREE.Vector3(0, 0, 0));
                     }
                 }
                 checkCollision();
             }
-
+    
             // Display informational text for spacecraft and planet camera locks
             const infoTextDiv = document.getElementById("infoText");
             const infoTextPlanetDiv = document.getElementById("infoTextPlanet");
-            if (cameraLockedToSpacecraft) {
-                infoTextDiv.style.display = "block";
-            } else {
-                infoTextDiv.style.display = "none";
-            }
-            if (cameraLockedToPlanet) {
-                infoTextPlanetDiv.style.display = "block";
-            } else {
-                infoTextPlanetDiv.style.display = "none";
-            }
-
+            infoTextDiv.style.display = cameraLockedToSpacecraft ? "block" : "none";
+            infoTextPlanetDiv.style.display = cameraLockedToPlanet ? "block" : "none";
+    
             const collisionThreshold = 0.5;
             for (let i = geyserParticles.length - 1; i >= 0; i--) {
                 const particle = geyserParticles[i];
@@ -319,11 +362,11 @@
                     geyserParticles.splice(i, 1);
                 }
             }
-
+    
             if (Math.random() < 0.05) {
                 scheduleGeyser();
             }
-
+    
             for (let i = upcomingGeysers.length - 1; i >= 0; i--) {
                 upcomingGeysers[i].timeLeft -= delta;
                 if (upcomingGeysers[i].timeLeft <= 0) {
@@ -334,7 +377,7 @@
                     upcomingGeysers[i].marker.material.color.set(0xff0000);
                 }
             }
-
+    
             for (let i = geyserParticles.length - 1; i >= 0; i--) {
                 const particle = geyserParticles[i];
                 particle.mesh.position.add(particle.velocity);
@@ -347,18 +390,22 @@
             renderer.render(scene, camera);
         }
         animate();
-
+    
         window.addEventListener("keydown", (event) => {
-            if (event.key === "w") velocity.z -= 0.05;
-            if (event.key === "s") velocity.z += 0.05;
-            if (event.key === "a") velocity.x -= 0.05;
-            if (event.key === "d") velocity.x += 0.05;
-            if (event.key === "q") velocity.y -= 0.05;
-            if (event.key === "e") velocity.y += 0.05;
+            // Reduced movement increments for slower spacecraft movement
+            if (event.key === "w") velocity.z -= 0.025;
+            if (event.key === "s") velocity.z += 0.025;
+            if (event.key === "a") velocity.x -= 0.025;
+            if (event.key === "d") velocity.x += 0.025;
+            if (event.key === "q") velocity.y -= 0.025;
+            if (event.key === "e") velocity.y += 0.025;
             if (!cameraLockedToSpacecraft) {
                 camera.lookAt(new THREE.Vector3(0, 0, 0));
             }
         });
+    
+        // Hide instructions overlay after 3 seconds on first load
+        
     </script>
 </body>
 </html>
