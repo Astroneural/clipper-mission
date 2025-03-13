@@ -8,6 +8,19 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         body { margin: 0; overflow: hidden; }
+        #resetButton {
+            position: absolute;
+            top: 160px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #resetButton:hover { background: rgba(50, 50, 50, 0.7); }
         #collisionCounter {
             position: absolute;
             top: 10px;
@@ -160,16 +173,35 @@
             .mobile-controls {
                 display: block;
             }
+            
+            #infoText, #infoTextPlanet {
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                transform: none;
+                border-radius: 0;
+                box-sizing: border-box;
+                font-size: 14px;
+                padding: 15px;
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+            
+            #infoTextPlanet {
+                bottom: 0;
+            }
         }
     </style>
 </head>
 <body>
     <div id="collisionCounter">Particles Collected: 0</div>
-    <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few disclaimers: <ul><li>Clipper does not actually fly through the plumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></ul></div>
+    <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few disc""laimers: <ul><li>Clipper does not actually fly through the p""lumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></ul></div>
     <div id="infoTextPlanet">Europa is one of the many moons of Jupiter and one of only two icy moons in the Solar System, the other being Saturn's moon Enceladus. Beneath the ice layer lies a liquid ocean (twice the size of all of Earth's!) thanks to the gravitational effects of Jupiter. Europa also has geysers erupting water vapor which may hint at inner contents and the possibility of life. On the surface, we can also see cracks along the surface. These, along with the lack of craters and the fact that it is the smoothest object in the solar system, suggest the surface is self-healing.</div>
     <button id="cameraLockButton">Info on Europa Clipper</button>
     <button id="cameraLockButton_planet">Info on Europa</button>
     <button id="showInstructionsButton">Show Instructions</button>
+    <button id="resetButton">Reset Position</button>
     
     <!-- Mobile controls -->
     <div class="mobile-controls">
@@ -213,6 +245,24 @@
         let cameraLockedToPlanet = false;
         const cameraLockButton = document.getElementById('cameraLockButton');
         const cameraLockButton_planet = document.getElementById('cameraLockButton_planet');
+        const infoTextDiv = document.getElementById("infoText");
+        const infoTextPlanetDiv = document.getElementById("infoTextPlanet");
+        const mobileControls = document.querySelector('.mobile-controls');
+        
+        // Function to toggle mobile controls visibility when info is shown
+        function toggleMobileControlsVisibility() {
+            const isMobile = window.innerWidth <= 1024;
+            const infoShown = cameraLockedToSpacecraft || cameraLockedToPlanet;
+            
+            // Only apply special handling on mobile
+            if (isMobile) {
+                if (infoShown) {
+                    mobileControls.style.display = 'none';
+                } else {
+                    mobileControls.style.display = 'block';
+                }
+            }
+        }
     
         cameraLockButton.addEventListener('click', () => {
             cameraLockedToSpacecraft = !cameraLockedToSpacecraft;
@@ -221,6 +271,7 @@
                 cameraLockButton_planet.textContent = "Info on Europa";
             }
             cameraLockButton.textContent = cameraLockedToSpacecraft ? "Back" : "Info on Europa Clipper";
+            toggleMobileControlsVisibility();
         });
     
         cameraLockButton_planet.addEventListener('click', () => {
@@ -230,6 +281,7 @@
                 cameraLockButton.textContent = "Info on Europa Clipper";
             }
             cameraLockButton_planet.textContent = cameraLockedToPlanet ? "Back" : "Info on Europa";
+            toggleMobileControlsVisibility();
         });
     
         // Show and Close Instructions event handlers
@@ -416,8 +468,6 @@
             }
     
             // Display informational text for spacecraft and planet camera locks
-            const infoTextDiv = document.getElementById("infoText");
-            const infoTextPlanetDiv = document.getElementById("infoTextPlanet");
             infoTextDiv.style.display = cameraLockedToSpacecraft ? "block" : "none";
             infoTextPlanetDiv.style.display = cameraLockedToPlanet ? "block" : "none";
     
@@ -475,6 +525,13 @@
             }
         });
         
+        // Reset spacecraft position
+        const resetButton = document.getElementById('resetButton');
+        resetButton.addEventListener('click', () => {
+            spacecraft.position.set(8, 0, 0);
+            velocity.set(0, 0.25, 0);
+        });
+
         // Mobile controls implementation
         const joystickContainer = document.getElementById('joystick-container');
         const joystick = document.getElementById('joystick');
@@ -491,10 +548,13 @@
         function initJoystick() {
             const rect = joystickContainer.getBoundingClientRect();
             joystickOrigin = {
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
             };
             resetJoystick();
+            
+            // Call the toggle function to set initial state
+            toggleMobileControlsVisibility();
         }
         
         function resetJoystick() {
@@ -516,8 +576,8 @@
         
         function handleJoystickMove(event) {
             if (joystickActive) {
-                event.preventDefault();
-                updateJoystickPosition(event.touches[0]);
+            event.preventDefault();
+            updateJoystickPosition(event.touches[0]);
             }
         }
         
@@ -538,25 +598,24 @@
             
             // If joystick is beyond max distance, normalize the position
             if (distance > maxJoystickDistance) {
-                const angle = Math.atan2(deltaY, deltaX);
-                joystickPosition = {
-                    x: Math.cos(angle) * maxJoystickDistance,
-                    y: Math.sin(angle) * maxJoystickDistance
-                };
+            const angle = Math.atan2(deltaY, deltaX);
+            joystickPosition = {
+                x: Math.cos(angle) * maxJoystickDistance,
+                y: Math.sin(angle) * maxJoystickDistance
+            };
             } else {
-                joystickPosition = { x: deltaX, y: deltaY };
+            joystickPosition = { x: deltaX, y: deltaY };
             }
             
             // Update joystick element position
             joystick.style.left = (40 + joystickPosition.x) + 'px';
             joystick.style.top = (40 + joystickPosition.y) + 'px';
             
-            // Apply movement to spacecraft
+            // Apply movement to spacecraft with reduced sensitivity
             if (spacecraft) {
-                // Convert joystick position to velocity changes
-                // Normalize by maxJoystickDistance so we get values between -1 and 1
-                velocity.x -= (joystickPosition.x / maxJoystickDistance) * 0.01;
-                velocity.z += (joystickPosition.y / maxJoystickDistance) * 0.01;
+            // Reduced multiplier from 0.01 to 0.005 for less sensitivity
+            velocity.x -= (joystickPosition.x / maxJoystickDistance) * 0.005;
+            velocity.z += (joystickPosition.y / maxJoystickDistance) * 0.005;
             }
         }
         
@@ -586,21 +645,24 @@
         
         function applyYMovement() {
             if (upButtonPressed) {
-                velocity.y += 0.025;
+            velocity.y += 0.015; // Also reduced from 0.025
             }
             if (downButtonPressed) {
-                velocity.y -= 0.025;
+            velocity.y -= 0.015; // Also reduced from 0.025
             }
         }
         
         // Initialize controls when page loads
         window.addEventListener('load', initJoystick);
-        window.addEventListener('resize', initJoystick);
+        window.addEventListener('resize', function() {
+            initJoystick();
+            toggleMobileControlsVisibility();
+        });
         
         // Hide instructions overlay after a short delay
         setTimeout(() => {
             instructionsDiv.style.display = "none";
-        }, 3000);
+        }, 5000);
     </script>
 </body>
 </html>
