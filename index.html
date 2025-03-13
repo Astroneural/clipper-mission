@@ -14,7 +14,7 @@
             left: 10px;
             color: white;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
+            font-size: 14px;
             background: rgba(0, 0, 0, 0.5);
             padding: 5px 10px;
             border-radius: 4px;
@@ -103,6 +103,64 @@
             font-family: 'Courier New', Courier, monospace;
         }
         #closeInstructionsButton:hover { background: rgba(50, 50, 50, 0.7); }
+        
+        /* Mobile controls */
+        .mobile-controls {
+            display: none; /* Hide by default, show on mobile */
+        }
+        
+        /* Joystick styles */
+        #joystick-container {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 120px;
+            height: 120px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            touch-action: none;
+        }
+        
+        #joystick {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            touch-action: none;
+        }
+        
+        /* Up/Down button styles */
+        #vertical-controls {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .control-button {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            touch-action: none;
+            user-select: none;
+        }
+        
+        @media (max-width: 1024px) {
+            .mobile-controls {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -112,6 +170,18 @@
     <button id="cameraLockButton">Info on Europa Clipper</button>
     <button id="cameraLockButton_planet">Info on Europa</button>
     <button id="showInstructionsButton">Show Instructions</button>
+    
+    <!-- Mobile controls -->
+    <div class="mobile-controls">
+        <div id="joystick-container">
+            <div id="joystick"></div>
+        </div>
+        <div id="vertical-controls">
+            <div class="control-button" id="up-button">↑</div>
+            <div class="control-button" id="down-button">↓</div>
+        </div>
+    </div>
+    
     <!-- Instructions overlay -->
     <div id="instructions">
         <div>
@@ -120,7 +190,8 @@
             Use A/D to move in the X direction<br>
             Use Q/E to move in the Y direction<br>
             <span style="color: rgb(0, 238, 255);">Goal: Collect particles from geysers</span><br>
-            Click buttons for additional info
+            Click buttons for additional info<br>
+            <span style="font-size: 18px;">On mobile: Use joystick for X/Z movement and buttons for Y movement</span>
         </div>
         <button id="closeInstructionsButton">Close</button>
     </div>
@@ -403,9 +474,133 @@
                 camera.lookAt(new THREE.Vector3(0, 0, 0));
             }
         });
-    
-        // Hide instructions overlay after 3 seconds on first load
         
+        // Mobile controls implementation
+        const joystickContainer = document.getElementById('joystick-container');
+        const joystick = document.getElementById('joystick');
+        const upButton = document.getElementById('up-button');
+        const downButton = document.getElementById('down-button');
+        
+        // Joystick variables
+        let joystickActive = false;
+        let joystickOrigin = { x: 0, y: 0 };
+        let joystickPosition = { x: 0, y: 0 };
+        const maxJoystickDistance = 40; // Maximum distance joystick can move from center
+        
+        // Initialize joystick in center position
+        function initJoystick() {
+            const rect = joystickContainer.getBoundingClientRect();
+            joystickOrigin = {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+            resetJoystick();
+        }
+        
+        function resetJoystick() {
+            joystick.style.left = '40px';
+            joystick.style.top = '40px';
+            joystickPosition = { x: 0, y: 0 };
+        }
+        
+        // Joystick touch events
+        joystickContainer.addEventListener('touchstart', handleJoystickStart);
+        joystickContainer.addEventListener('touchmove', handleJoystickMove);
+        joystickContainer.addEventListener('touchend', handleJoystickEnd);
+        
+        function handleJoystickStart(event) {
+            event.preventDefault();
+            joystickActive = true;
+            updateJoystickPosition(event.touches[0]);
+        }
+        
+        function handleJoystickMove(event) {
+            if (joystickActive) {
+                event.preventDefault();
+                updateJoystickPosition(event.touches[0]);
+            }
+        }
+        
+        function handleJoystickEnd(event) {
+            joystickActive = false;
+            resetJoystick();
+        }
+        
+        function updateJoystickPosition(touch) {
+            const rect = joystickContainer.getBoundingClientRect();
+            
+            // Calculate position relative to joystick container center
+            const deltaX = touch.clientX - (rect.left + rect.width / 2);
+            const deltaY = touch.clientY - (rect.top + rect.height / 2);
+            
+            // Calculate distance from center
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            // If joystick is beyond max distance, normalize the position
+            if (distance > maxJoystickDistance) {
+                const angle = Math.atan2(deltaY, deltaX);
+                joystickPosition = {
+                    x: Math.cos(angle) * maxJoystickDistance,
+                    y: Math.sin(angle) * maxJoystickDistance
+                };
+            } else {
+                joystickPosition = { x: deltaX, y: deltaY };
+            }
+            
+            // Update joystick element position
+            joystick.style.left = (40 + joystickPosition.x) + 'px';
+            joystick.style.top = (40 + joystickPosition.y) + 'px';
+            
+            // Apply movement to spacecraft
+            if (spacecraft) {
+                // Convert joystick position to velocity changes
+                // Normalize by maxJoystickDistance so we get values between -1 and 1
+                velocity.x -= (joystickPosition.x / maxJoystickDistance) * 0.01;
+                velocity.z += (joystickPosition.y / maxJoystickDistance) * 0.01;
+            }
+        }
+        
+        // Up/Down button touch events
+        let upButtonPressed = false;
+        let downButtonPressed = false;
+        
+        upButton.addEventListener('touchstart', function(event) {
+            event.preventDefault();
+            upButtonPressed = true;
+            applyYMovement();
+        });
+        
+        upButton.addEventListener('touchend', function() {
+            upButtonPressed = false;
+        });
+        
+        downButton.addEventListener('touchstart', function(event) {
+            event.preventDefault();
+            downButtonPressed = true;
+            applyYMovement();
+        });
+        
+        downButton.addEventListener('touchend', function() {
+            downButtonPressed = false;
+        });
+        
+        function applyYMovement() {
+            if (upButtonPressed) {
+                velocity.y += 0.025;
+            }
+            if (downButtonPressed) {
+                velocity.y -= 0.025;
+            }
+        }
+        
+        // Initialize controls when page loads
+        window.addEventListener('load', initJoystick);
+        window.addEventListener('resize', initJoystick);
+        
+        // Hide instructions overlay after a short delay
+        setTimeout(() => {
+            instructionsDiv.style.display = "none";
+        }, 3000);
     </script>
 </body>
 </html>
