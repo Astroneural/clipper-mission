@@ -107,7 +107,7 @@
 </head>
 <body>
     <div id="collisionCounter">Particles Collected: 0</div>
-    <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few: <ul><li>Clipper does not actually fly through the plumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></ul></div>
+    <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few disclaimers: <ul><li>Clipper does not actually fly through the plumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></ul></div>
     <div id="infoTextPlanet">Europa is one of the many moons of Jupiter and one of only two icy moons in the Solar System, the other being Saturn's moon Enceladus. Beneath the ice layer lies a liquid ocean (twice the size of all of Earth's!) thanks to the gravitational effects of Jupiter. Europa also has geysers erupting water vapor which may hint at inner contents and the possibility of life. On the surface, we can also see cracks along the surface. These, along with the lack of craters and the fact that it is the smoothest object in the solar system, suggest the surface is self-healing.</div>
     <button id="cameraLockButton">Info on Europa Clipper</button>
     <button id="cameraLockButton_planet">Info on Europa</button>
@@ -116,7 +116,7 @@
     <div id="instructions">
         <div>
             <span style="color: rgb(255,0,0); font-size: 32px;">Europa Clipper: The Game</span><br>
-            Use W/A to move in the Z direction<br>
+            Use W/S to move in the Z direction<br>
             Use A/D to move in the X direction<br>
             Use Q/E to move in the Y direction<br>
             <span style="color: rgb(0, 238, 255);">Goal: Collect particles from geysers</span><br>
@@ -230,7 +230,7 @@
             console.error(error);
         });
     
-        camera.position.set(0, 10, 15);
+        camera.position.set(0, 10, 20);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
     
         // Gravity
@@ -241,7 +241,7 @@
         function checkCollision() {
             const distance = spacecraft.position.length();
             if (distance < 5.5) {
-                alert("Game Over: Spacecraft crashed into the planet!");
+                alert("Game Over: Clipper crashed into Europa!");
                 spacecraft.position.set(8, 0, 0);
                 velocity.set(0, 0.25, 0);
             }
@@ -279,7 +279,7 @@
                 );
                 cone.position.copy(offset);
                 cone.lookAt(offset.clone().add(surfacePoint.clone().normalize()));
-                const speed = 0.15 + Math.random() * 0.1;
+                const speed = 0.05 + Math.random() * 0.1;
                 const directionVariation = new THREE.Vector3(
                     (Math.random() - 0.5) * 0.1,
                     (Math.random() - 0.5) * 0.1,
@@ -287,7 +287,7 @@
                 );
                 const direction = surfacePoint.clone().normalize().add(directionVariation).normalize();
                 const particleVelocity = direction.multiplyScalar(speed);
-                const lifetime = 100;
+                const lifetime = 300;
                 geyserParticles.push({ 
                     mesh: cone, 
                     velocity: particleVelocity, 
@@ -337,7 +337,7 @@
                     }
                 } else {
                     if (camera.position.x !== 0 || camera.position.y !== 15 || camera.position.z !== 20) {
-                        camera.position.set(0, 10, 15);
+                        camera.position.set(0, 10, 20);
                         camera.lookAt(new THREE.Vector3(0, 0, 0));
                     }
                 }
@@ -363,7 +363,7 @@
                 }
             }
     
-            if (Math.random() < 0.05) {
+            if (Math.random() < 0.02) {
                 scheduleGeyser();
             }
     
@@ -374,7 +374,7 @@
                     createGeyserParticle(upcomingGeysers[i].surfacePoint);
                     upcomingGeysers.splice(i, 1);
                 } else if (upcomingGeysers[i].timeLeft <= 5) {
-                    upcomingGeysers[i].marker.material.color.set(0xff0000);
+                    upcomingGeysers[i].marker.material.color.set(0xf74a6a);
                 }
             }
     
