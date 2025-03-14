@@ -195,7 +195,7 @@
     </style>
 </head>
 <body>
-    <div id="collisionCounter">Particles Collected: 0</div>
+    <div id="collisionCounter" style="color: rgb(0, 238, 255);">Particles Collected: 0</div>
     <div id="infoText">Europa clipper was launched in Oct. 2024 with the mission to learn more about Europa. Because of its liquid ocean underneath the ice, is one of the best possibilities for life outside Earth in our Solar System. One of the nine instruments on board, MASPEX, collects gas from Europa's atmosphere to determine its makeup. Some gas does come from the geysers on Europa spewing water vapor, but a few disc""laimers: <ul><li>Clipper does not actually fly through the p""lumes</li><li>Clipper does not orbit Europa, but instead Jupiter, and will make 44 flybys.</li></ul></div>
     <div id="infoTextPlanet">Europa is one of the many moons of Jupiter and one of only two icy moons in the Solar System, the other being Saturn's moon Enceladus. Beneath the ice layer lies a liquid ocean (twice the size of all of Earth's!) thanks to the gravitational effects of Jupiter. Europa also has geysers erupting water vapor which may hint at inner contents and the possibility of life. On the surface, we can also see cracks along the surface. These, along with the lack of craters and the fact that it is the smoothest object in the solar system, suggest the surface is self-healing.</div>
     <button id="cameraLockButton">Info on Europa Clipper</button>
@@ -478,7 +478,7 @@
                 particle.mesh.getWorldPosition(particleWorldPos);
                 if (spacecraft && spacecraft.position.distanceTo(particleWorldPos) < collisionThreshold) {
                     geyserCollisionCount++;
-                    collisionCounterDiv.innerText = "Particles Collected: " + geyserCollisionCount;
+                    collisionCounterDiv.innerHTML = `<span style="color: rgb(0, 238, 255);">Particles Collected: ${geyserCollisionCount}</span>`;
                     particle.geyserGroup.remove(particle.mesh);
                     geyserParticles.splice(i, 1);
                 }
